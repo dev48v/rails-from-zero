@@ -58,10 +58,12 @@ class BooksController < ApplicationController
     redirect_to books_path, notice: "Book removed."
   end
 
-  # GET /search — placeholder until Step 6.
+  # STEP 6 — GET /search → live Open Library results.
+  # Empty queries skip the network call (the service short-circuits anyway, but
+  # being explicit keeps the page fast on first visit).
   def search
-    @query = params[:q].to_s
-    @results = []
+    @query = params[:q].to_s.strip
+    @results = @query.empty? ? [] : OpenLibraryService.search(@query)
   end
 
   # POST /books/import — placeholder until Step 7.

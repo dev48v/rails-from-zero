@@ -1,5 +1,4 @@
-<%# STEP 4 — Search view skeleton. Step 6 wires it to Open Library. %>
-<%# Defined now so the navbar link from Step 4 does not 404. %>
+<%# STEP 6 — Search results grid backed by OpenLibraryService. %>
 
 <h1 class="h3 mb-4">Search Open Library</h1>
 
@@ -13,6 +12,40 @@
   </div>
 <% end %>
 
-<% if @query.present? %>
-  <p class="text-muted">Live results land here in step 6.</p>
+<% if @query.present? && @results.empty? %>
+  <p class="text-muted">No results for "<%= @query %>". Try fewer words or a different spelling.</p>
+
+<% elsif @results.any? %>
+  <p class="text-muted small mb-3"><%= @results.size %> result<%= 's' if @results.size != 1 %> for "<%= @query %>".</p>
+  <div class="row g-3">
+    <% @results.each do |result| %>
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm">
+          <div class="row g-0">
+            <div class="col-4">
+              <% if result[:cover_url] %>
+                <%= image_tag result[:cover_url], alt: result[:title], class: "img-fluid rounded-start h-100 object-fit-cover" %>
+              <% else %>
+                <div class="bg-secondary-subtle h-100 d-flex align-items-center justify-content-center text-muted small">no cover</div>
+              <% end %>
+            </div>
+            <div class="col-8">
+              <div class="card-body d-flex flex-column">
+                <h2 class="h6 mb-1"><%= result[:title] %></h2>
+                <p class="text-muted small mb-1"><%= result[:author] || "Unknown author" %></p>
+                <% if result[:published_year] %>
+                  <p class="text-muted small mb-2"><%= result[:published_year] %></p>
+                <% end %>
+                <%# Step 7 turns this into a real one-click import. %>
+                <button class="btn btn-sm btn-outline-primary mt-auto" disabled>Add to library →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+<% else %>
+  <p class="text-muted">Search for any title or author. Open Library has 30+ million records.</p>
 <% end %>
