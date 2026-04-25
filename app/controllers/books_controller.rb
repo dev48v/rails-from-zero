@@ -11,7 +11,7 @@ class BooksController < ApplicationController
   # before_action runs before every listed action. set_book centralises the
   # `@book = Book.find(params[:id])` lookup so each action below stays focused
   # on its own job.
-  before_action :set_book, only: %i[show edit update destroy]
+  before_action :set_book, only: %i[show edit update destroy toggle_favorite]
 
   # GET /books — list every book. The default_scope on Book sorts newest-first.
   def index
@@ -56,6 +56,16 @@ class BooksController < ApplicationController
   def destroy
     @book.destroy
     redirect_to books_path, notice: "Book removed."
+  end
+
+  # STEP 9 — PATCH /books/:id/toggle_favorite.
+  # Flip the boolean and bounce back to wherever the request came from so the
+  # heart button can sit on either the show page or the index without each
+  # caller having to know what URL to redirect to.
+  def toggle_favorite
+    @book.update(favorite: !@book.favorite)
+    redirect_back fallback_location: @book,
+                  notice: @book.favorite ? "Marked as favourite." : "Removed favourite."
   end
 
   # STEP 6 — GET /search → live Open Library results.

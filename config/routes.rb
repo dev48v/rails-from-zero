@@ -14,7 +14,13 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   # The library itself.
-  resources :books
+  # The :toggle_favorite member route (STEP 9) targets a single book — Rails
+  # builds toggle_favorite_book_path(book) for us.
+  resources :books do
+    member do
+      patch :toggle_favorite
+    end
+  end
 
   # Step 6 will add Open Library search; Step 7 will add a one-click import
   # from a search result. Defining them now keeps Step 3's diff cohesive.

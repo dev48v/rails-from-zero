@@ -11,7 +11,20 @@
   </div>
 
   <div class="col-md-8">
-    <h1><%= @book.title %></h1>
+    <h1>
+      <%= @book.title %>
+      <%# STEP 9 — Favourite toggle. button_to issues a real PATCH; the heart %>
+      <%# fills in red when @book.favorite is true. %>
+      <%= button_to toggle_favorite_book_path(@book),
+            method: :patch,
+            class: "btn btn-link text-decoration-none p-0 align-baseline ms-2",
+            form: { class: "d-inline" },
+            title: @book.favorite ? "Remove favourite" : "Mark as favourite" do %>
+        <span class="fs-3 <%= @book.favorite ? 'text-danger' : 'text-secondary' %>">
+          <%= @book.favorite ? "♥" : "♡" %>
+        </span>
+      <% end %>
+    </h1>
     <p class="text-muted lead mb-1"><%= @book.author %></p>
     <% if @book.published_year.present? %>
       <p class="text-muted small">Published <%= @book.published_year %></p>
