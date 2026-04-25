@@ -1,0 +1,86 @@
+# STEP 3 — BooksController.
+# Every action here is one HTTP entry point. Rails calls the action method,
+# instance variables (@book, @books) are passed automatically to the matching
+# ERB view, and the view is rendered unless we call `redirect_to` or `render`
+# explicitly.
+#
+# Step 6 will add #search; Step 7 will add #import. Stubs are here from day one
+# so the routes from Step 3 do not 404 — but they just render placeholders for
+# now and gain real bodies later.
+class BooksController < ApplicationController
+  # before_action runs before every listed action. set_book centralises the
+  # `@book = Book.find(params[:id])` lookup so each action below stays focused
+  # on its own job.
+  before_action :set_book, only: %i[show edit update destroy]
+
+  # GET /books — list every book. The default_scope on Book sorts newest-first.
+  def index
+    @books = Book.all
+  end
+
+  # GET /books/:id
+  def show
+  end
+
+  # GET /books/new — render an empty form.
+  def new
+    @book = Book.new
+  end
+
+  # GET /books/:id/edit
+  def edit
+  end
+
+  # POST /books — handle the form from #new.
+  def create
+    @book = Book.new(book_params)
+    if @book.save
+      redirect_to @book, notice: "Book added to your library."
+    else
+      # Re-render the form with errors. Status 422 is the convention for
+      # validation failures so Turbo replaces the page properly.
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  # PATCH /books/:id — handle the form from #edit.
+  def update
+    if @book.update(book_params)
+      redirect_to @book, notice: "Book updated."
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  # DELETE /books/:id
+  def destroy
+    @book.destroy
+    redirect_to books_path, notice: "Book removed."
+  end
+
+  # GET /search — placeholder until Step 6.
+  def search
+    @query = params[:q].to_s
+    @results = []
+  end
+
+  # POST /books/import — placeholder until Step 7.
+  def import
+    redirect_to search_path, alert: "Import is wired up in step 7."
+  end
+
+  private
+
+  # Looks up the requested book once for any action that needs it.
+  def set_book
+    @book = Book.find(params[:id])
+  end
+
+  # Strong Parameters — only allow the fields we actually use into mass
+  # assignment. Anything not whitelisted (like an `admin: true` attribute
+  # someone might try to sneak in) is silently dropped.
+  def book_params
+    params.require(:book).permit(:title, :author, :cover_url, :olid,
+                                 :published_year, :description)
+  end
+end
