@@ -1,0 +1,18 @@
+<%# STEP 4 — Search view skeleton. Step 6 wires it to Open Library. %>
+<%# Defined now so the navbar link from Step 4 does not 404. %>
+
+<h1 class="h3 mb-4">Search Open Library</h1>
+
+<%= form_with url: search_path, method: :get, local: true, class: "row g-2 mb-4" do |f| %>
+  <div class="col">
+    <%= f.text_field :q, value: @query, class: "form-control form-control-lg",
+          placeholder: "Title, author, ISBN…", autofocus: true %>
+  </div>
+  <div class="col-auto">
+    <%= f.submit "Search", class: "btn btn-primary btn-lg" %>
+  </div>
+<% end %>
+
+<% if @query.present? %>
+  <p class="text-muted">Live results land here in step 6.</p>
+<% end %>

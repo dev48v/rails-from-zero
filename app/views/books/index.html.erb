@@ -1,0 +1,45 @@
+<%# STEP 4 — index view: list every book in the library. %>
+<%# @books is set by BooksController#index and uses the model's default_scope %>
+<%# (newest first). %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1 class="h3 m-0">My Library</h1>
+  <%= link_to "+ Add a book", new_book_path, class: "btn btn-primary" %>
+</div>
+
+<% if @books.any? %>
+  <div class="row g-3">
+    <% @books.each do |book| %>
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm">
+          <div class="row g-0">
+            <div class="col-4">
+              <% if book.cover_url.present? %>
+                <%# Bootstrap's object-fit utility keeps covers from squashing. %>
+                <%= image_tag book.cover_url, alt: book.title,
+                    class: "img-fluid rounded-start h-100 object-fit-cover" %>
+              <% else %>
+                <div class="bg-secondary-subtle h-100 d-flex align-items-center justify-content-center text-muted small">no cover</div>
+              <% end %>
+            </div>
+            <div class="col-8">
+              <div class="card-body">
+                <h2 class="h6 card-title mb-1"><%= link_to book.title, book, class: "stretched-link text-decoration-none" %></h2>
+                <p class="card-text text-muted small mb-0"><%= book.author %></p>
+                <% if book.published_year.present? %>
+                  <p class="card-text text-muted small mb-0"><%= book.published_year %></p>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <%# Empty state — shown when there are zero books. Step 10 polishes the copy. %>
+  <div class="text-center py-5">
+    <p class="lead text-muted">Your library is empty.</p>
+    <%= link_to "Search Open Library", search_path, class: "btn btn-primary" %>
+  </div>
+<% end %>

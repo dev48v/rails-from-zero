@@ -1,0 +1,54 @@
+<%# STEP 4 — Shared form partial used by both new and edit. %>
+<%# `form_with model: book` is smart: it POSTs to /books for new records and %>
+<%# PATCHes to /books/:id for persisted ones. One file, two purposes. %>
+
+<%= form_with model: book, class: "card card-body shadow-sm" do |f| %>
+  <% if book.errors.any? %>
+    <%# Step 8 introduces a richer flash; this is the inline form-level summary. %>
+    <div class="alert alert-danger">
+      <strong><%= pluralize(book.errors.count, "error") %></strong> stopped this book from saving:
+      <ul class="mb-0">
+        <% book.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= f.label :title, class: "form-label" %>
+    <%= f.text_field :title, class: "form-control", required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :author, class: "form-label" %>
+    <%= f.text_field :author, class: "form-control" %>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= f.label :published_year, class: "form-label" %>
+      <%= f.number_field :published_year, class: "form-control", min: 1, max: 2100 %>
+    </div>
+    <div class="col-md-6 mb-3">
+      <%= f.label :olid, "Open Library ID (optional)", class: "form-label" %>
+      <%= f.text_field :olid, class: "form-control", placeholder: "e.g. OL45804W" %>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :cover_url, class: "form-label" %>
+    <%= f.url_field :cover_url, class: "form-control",
+          placeholder: "https://covers.openlibrary.org/b/olid/OL45804W-M.jpg" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :description, class: "form-label" %>
+    <%= f.text_area :description, class: "form-control", rows: 4 %>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= f.submit class: "btn btn-primary" %>
+    <%= link_to "Cancel", (book.persisted? ? book : books_path), class: "btn btn-link" %>
+  </div>
+<% end %>
