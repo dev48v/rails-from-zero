@@ -1,0 +1,15 @@
+<%# STEP 8 — Shared flash partial. %>
+<%# Rails maps :notice -> success, :alert -> warning, others -> info. %>
+<%# `flash.discard` after rendering ensures the message does not leak across %>
+<%# requests if the user refreshes. %>
+<% flash.each do |type, msg| %>
+  <% bootstrap_class = case type
+       when "notice" then "success"
+       when "alert"  then "warning"
+       else "info"
+       end %>
+  <div class="alert alert-<%= bootstrap_class %> alert-dismissible fade show" role="alert">
+    <%= msg %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<% end %>
