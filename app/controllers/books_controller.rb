@@ -66,9 +66,20 @@ class BooksController < ApplicationController
     @results = @query.empty? ? [] : OpenLibraryService.search(@query)
   end
 
-  # POST /books/import — placeholder until Step 7.
+  # STEP 7 — POST /books/import.
+  # Accepts the hidden fields submitted from a search result card and stores
+  # them as a Book row. We don't re-call Open Library here — the data the user
+  # already saw on the search page is exactly what we save, which keeps the
+  # import deterministic.
   def import
-    redirect_to search_path, alert: "Import is wired up in step 7."
+    book = Book.new(import_params)
+    if book.save
+      redirect_to book, notice: "Added \"#{book.title}\" to your library."
+    else
+      # Most failures here are "you already imported this OLID" or a missing
+      # title (defensive: the form supplies it, but a malicious POST might not).
+      redirect_to search_path(q: params[:q]), alert: book.errors.full_messages.to_sentence
+    end
   end
 
   private
@@ -84,5 +95,11 @@ class BooksController < ApplicationController
   def book_params
     params.require(:book).permit(:title, :author, :cover_url, :olid,
                                  :published_year, :description)
+  end
+
+  # Import params come straight from the search-result form (no `book` wrapper),
+  # so they need their own permit list. STEP 7.
+  def import_params
+    params.permit(:title, :author, :cover_url, :olid, :published_year)
   end
 end

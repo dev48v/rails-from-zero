@@ -36,8 +36,21 @@
                 <% if result[:published_year] %>
                   <p class="text-muted small mb-2"><%= result[:published_year] %></p>
                 <% end %>
-                <%# Step 7 turns this into a real one-click import. %>
-                <button class="btn btn-sm btn-outline-primary mt-auto" disabled>Add to library →</button>
+                <%#
+                  STEP 7 — One-click import.
+                  Each result becomes its own tiny POST form. Hidden fields carry
+                  exactly what the user just saw, so what they import equals what
+                  they previewed.
+                %>
+                <%= form_with url: import_book_path, method: :post, local: true, class: "mt-auto" do %>
+                  <%= hidden_field_tag :title, result[:title] %>
+                  <%= hidden_field_tag :author, result[:author] %>
+                  <%= hidden_field_tag :cover_url, result[:cover_url] %>
+                  <%= hidden_field_tag :olid, result[:olid] %>
+                  <%= hidden_field_tag :published_year, result[:published_year] %>
+                  <%= hidden_field_tag :q, @query %>
+                  <%= submit_tag "Add to library →", class: "btn btn-sm btn-outline-primary w-100" %>
+                <% end %>
               </div>
             </div>
           </div>
