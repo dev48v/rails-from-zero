@@ -1,0 +1,21 @@
+# STEP 1 — One service, port 3000.
+# `docker compose up` builds the image (first run only) and starts Rails.
+
+services:
+  web:
+    build: .
+    # The bind mount lets you edit code on the host and see changes
+    # without rebuilding. The named volume keeps gem files inside the
+    # container so the host bundle never collides with the container bundle.
+    volumes:
+      - .:/app
+      - bundle:/usr/local/bundle
+    ports:
+      - "3000:3000"
+    # Drop any leftover server.pid from a previous crash so Rails can boot.
+    command: sh -c "rm -f tmp/pids/server.pid && bin/rails server -b 0.0.0.0 -p 3000"
+    tty: true
+    stdin_open: true
+
+volumes:
+  bundle:
